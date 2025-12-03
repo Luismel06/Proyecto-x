@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log
+
+# Build
+dist/
+.vite/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Backups
+*.log
+.DS_Store
+
+# Vercel
+.vercel
