@@ -4,11 +4,30 @@ import { randomUUID } from "crypto";
 
 const router = express.Router();
 
-/**
- * POST /api/orders/checkout
- * Crea una orden y devuelve una URL de pago (simulada).
- * En la vida real aquí llamas a Bankful / Samus con la info.
- */
+// GET /api/orders/videos  -> lista de videos desde Supabase
+router.get("/videos", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("videos") // 👈 nombre de tu tabla
+      .select("id, titulo, descripcion, precio")
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.error("Error consultando videos:", error);
+      return res
+        .status(500)
+        .json({ message: "Error al obtener el catálogo de videos" });
+    }
+
+    return res.json({ videos: data });
+  } catch (err) {
+    console.error("Error inesperado /videos:", err);
+    return res
+      .status(500)
+      .json({ message: "Error inesperado al obtener los videos" });
+  }
+});
+
 router.post("/checkout", async (req, res) => {
   try {
     const { userEmail, videoId } = req.body;
