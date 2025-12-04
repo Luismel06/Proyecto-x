@@ -4,12 +4,12 @@ import { randomUUID } from "crypto";
 
 const router = express.Router();
 
-// GET /api/orders/videos  -> lista de videos desde Supabase
+// GET /api/orders/videos - Obtener catálogo de videos
 router.get("/videos", async (req, res) => {
   try {
     const { data, error } = await supabase
-      .from("videos") // 👈 nombre de tu tabla
-      .select("id, titulo, descripcion, precio")
+      .from("videos")
+      .select("id, titulo, descripcion, precio, url_privada")
       .order("id", { ascending: true });
 
     if (error) {
@@ -19,7 +19,16 @@ router.get("/videos", async (req, res) => {
         .json({ message: "Error al obtener el catálogo de videos" });
     }
 
-    return res.json({ videos: data });
+
+    const videos = data.map((v) => ({
+      id: v.id,
+      titulo: v.titulo,
+      descripcion: v.descripcion,
+      precio: Number(v.precio),
+      url: v.url_privada,
+    }));
+
+    return res.json({ videos });
   } catch (err) {
     console.error("Error inesperado /videos:", err);
     return res
@@ -27,6 +36,7 @@ router.get("/videos", async (req, res) => {
       .json({ message: "Error inesperado al obtener los videos" });
   }
 });
+
 
 router.post("/checkout", async (req, res) => {
   try {
