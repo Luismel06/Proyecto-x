@@ -99,7 +99,7 @@ function HomePage() {
         <aside className="catalog-aside">
           <div className="catalog-hero-card">
             <img
-              src="/public/sales-hero.jpg"
+              src="/sales-hero.jpg"
               alt="Entrenamiento de ventas para vendedores de EE. UU."
             />
             <div className="hero-text">
