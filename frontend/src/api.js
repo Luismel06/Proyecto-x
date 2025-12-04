@@ -1,22 +1,30 @@
-const API_URL = "http://localhost:4000";
+// frontend/src/api.js
 
+// 🔹 Host del backend: toma de la env var, y si no existe usa localhost (modo dev)
+const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+
+// 🔹 Base común para todas las rutas del backend
+const API_BASE = `${API_HOST}/api/orders`;
+
+// Crear checkout (Paddle o lo que uses en backend)
 export async function createCheckout(userEmail, videoId) {
-  const res = await fetch(`${API_URL}/api/orders/checkout`, {
+  const res = await fetch(`${API_BASE}/checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userEmail, videoId })
+    body: JSON.stringify({ userEmail, videoId }),
   });
 
   if (!res.ok) {
     throw new Error("Error al crear checkout");
   }
 
-  return res.json();
+  return res.json(); // { paymentUrl: "..." } u otro formato que tengas
 }
 
+// Verificar si el usuario tiene acceso a un video
 export async function checkAccess(userEmail, videoId) {
   const params = new URLSearchParams({ userEmail, videoId });
-  const res = await fetch(`${API_URL}/api/orders/access/check?${params}`);
+  const res = await fetch(`${API_BASE}/access/check?${params.toString()}`);
 
   if (!res.ok) {
     throw new Error("Error al verificar acceso");
@@ -24,8 +32,8 @@ export async function checkAccess(userEmail, videoId) {
 
   return res.json();
 }
-const API_BASE = "http://localhost:4000/api/orders"; // ya la usábamos
 
+// Obtener catálogo de videos
 export async function getVideos() {
   const res = await fetch(`${API_BASE}/videos`);
 
@@ -34,8 +42,11 @@ export async function getVideos() {
   }
 
   const data = await res.json();
-  // Aseguramos que el precio sea número
-  return data.videos.map((v) => ({
+
+  // Si en backend devuelves { videos: [...] }
+  const list = Array.isArray(data) ? data : data.videos || [];
+
+  return list.map((v) => ({
     ...v,
     precio: Number(v.precio),
   }));
