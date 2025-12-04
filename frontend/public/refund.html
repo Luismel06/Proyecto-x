@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Refund Policy - Proyecto X</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --accent: #38bdf8;
+      --accent-warn: #f97316;
+      --border: rgba(148, 163, 184, 0.5);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: var(--text-main);
+    }
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(
+          135deg,
+          rgba(249, 115, 22, 0.08),
+          transparent 40%
+        ),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.96), #020617);
+      border-radius: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.9);
+      padding: 2.5rem 2rem 2.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top right,
+        rgba(249, 115, 22, 0.2),
+        transparent 55%
+      );
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .card-inner { position: relative; z-index: 1; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 171, 96, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .pill span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-warn);
+    }
+    h1 {
+      font-size: 1.9rem;
+      margin: 0 0 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .updated {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      margin-top: 1.6rem;
+      margin-bottom: 0.4rem;
+      font-size: 1.05rem;
+      border-left: 3px solid var(--accent-warn);
+      padding-left: 0.5rem;
+    }
+    p {
+      margin: 0.35rem 0;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    ul {
+      margin: 0.35rem 0 0.75rem 1.25rem;
+      padding: 0;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    li { margin-bottom: 0.25rem; }
+    .highlight-box {
+      border-radius: 0.9rem;
+      border: 1px solid rgba(248, 171, 96, 0.8);
+      background: rgba(15, 23, 42, 0.95);
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.86rem;
+      color: var(--text-main);
+    }
+    .highlight-title {
+      font-weight: 600;
+      color: var(--accent-warn);
+      margin-bottom: 0.15rem;
+      font-size: 0.83rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    @media (max-width: 640px) {
+      .card { padding: 1.75rem 1.25rem; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <main class="card">
+    <div class="card-inner">
+      <div class="pill">
+        <span></span>
+        Refunds for Digital Products
+      </div>
+      <h1>Refund Policy</h1>
+      <p class="subtitle">
+        This Policy explains when refunds may be granted for purchases of
+        digital training content from Proyecto X.
+      </p>
+      <p class="updated"><strong>Last updated:</strong> March 2025</p>
+
+      <div class="highlight-box">
+        <div class="highlight-title">Quick summary</div>
+        <p>
+          Because our content is delivered as instant-access digital products,
+          refunds are <strong>only</strong> available:
+        </p>
+        <ul>
+          <li>if requested within <strong>24 hours</strong> of completing the purchase, and</li>
+          <li>if the content has <strong>not been fully consumed</strong> (for example, the video has not been watched to the end).</li>
+        </ul>
+      </div>
+
+      <h2>1. Digital Products</h2>
+      <p>
+        Proyecto X provides intangible, digital training products, including video modules
+        and related materials (the “Digital Products”). Once payment is confirmed by
+        our payment partner <strong>Paddle</strong>, access to the content is granted
+        immediately.
+      </p>
+
+      <h2>2. General Rule – No Refund After 24 Hours</h2>
+      <p>
+        As a general rule, all sales are final. However, we offer a limited refund option
+        subject to the conditions below. Outside of those conditions, refunds are not
+        provided, except where required by applicable law.
+      </p>
+
+      <h2>3. Limited 24-Hour Refund Window</h2>
+      <p>
+        You may request a refund under the following conditions:
+      </p>
+      <ul>
+        <li>
+          The refund request is submitted within <strong>24 hours</strong> of the time
+          the purchase was completed and confirmed by Paddle (based on the timestamp
+          shown on your receipt).
+        </li>
+        <li>
+          The relevant Digital Product has <strong>not</strong> been fully consumed.
+          For video content, this means the video has not been watched in full.
+        </li>
+      </ul>
+      <p>
+        After the 24-hour period has expired, no refund will be granted, even if the
+        content has not been accessed or has only been partially accessed, unless a
+        specific consumer protection law in your jurisdiction requires otherwise.
+      </p>
+
+      <h2>4. Verification of Content Consumption</h2>
+      <p>
+        Proyecto X reserves the right to verify whether a Digital Product has been
+        consumed before deciding on a refund request. To do this, we may review
+        technical usage data, including but not limited to:
+      </p>
+      <ul>
+        <li>Playback progress logs (e.g., percentage of the video watched).</li>
+        <li>Access timestamps and session history.</li>
+        <li>IP addresses and device information used to access the content.</li>
+      </ul>
+      <p>
+        By purchasing a Digital Product, you acknowledge and agree that this type of
+        usage data may be processed and reviewed for the purpose of applying this
+        Refund Policy and preventing abuse.
+      </p>
+
+      <h2>5. Situations Where Refunds Are Not Granted</h2>
+      <p>
+        Refunds will not be granted in the following situations:
+      </p>
+      <ul>
+        <li>The refund request is made after the 24-hour window has expired.</li>
+        <li>The video or other Digital Product has been fully consumed or completed.</li>
+        <li>Buyer’s remorse or a change of mind after purchase.</li>
+        <li>Failure to achieve specific financial or business results.</li>
+        <li>Incompatibility with your device or internet connection issues that are not caused by us.</li>
+      </ul>
+
+      <h2>6. Billing Errors and Duplicate Charges</h2>
+      <p>
+        If you believe you have been charged in error (for example, duplicate
+        billing for the same product), please contact us as soon as possible using
+        the contact details below. We will review your case and, where appropriate,
+        work with Paddle to correct genuine billing errors.
+      </p>
+
+      <h2>7. How to Request a Refund</h2>
+      <p>
+        To request a refund within the permitted 24-hour period, please email:
+      </p>
+      <p><strong>support@proyectox.com</strong> (replace with your actual support email).</p>
+      <p>Your email should include:</p>
+      <ul>
+        <li>Your full name and the email used for the purchase.</li>
+        <li>The order ID or receipt from Paddle.</li>
+        <li>The name of the Digital Product you purchased.</li>
+        <li>A brief explanation of your request.</li>
+      </ul>
+
+      <h2>8. Chargebacks</h2>
+      <p>
+        If you initiate a chargeback with your bank or card issuer for a valid purchase,
+        we reserve the right to suspend or revoke your access to the corresponding
+        Digital Product and to contest the chargeback if we believe it is unfounded
+        or fraudulent.
+      </p>
+
+      <h2>9. Relationship with Terms of Service</h2>
+      <p>
+        This Refund Policy is part of, and should be read together with, our
+        <a href="/terms.html">Terms of Service</a>. In the event of any inconsistency,
+        the Terms of Service and applicable consumer protection laws will prevail.
+      </p>
+
+      <p class="note">
+        This Refund Policy is designed to balance fair treatment of customers with
+        the realities of delivering instant-access digital content. It does not
+        replace any mandatory consumer rights that may apply in your jurisdiction.
+        If you are unsure of your legal rights, you should seek independent legal advice.
+      </p>
+    </div>
+  </main>
+</div>
+</body>
+</html>
