@@ -1,39 +1,335 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Terms of Service - Proyecto X</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-card: #020617;
+      --bg-card-soft: rgba(15, 23, 42, 0.9);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --border: rgba(148, 163, 184, 0.5);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+      color: var(--text-main);
+    }
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: linear-gradient(
+          135deg,
+          rgba(56, 189, 248, 0.08),
+          transparent 40%
+        ),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.96), #020617);
+      border-radius: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.9);
+      padding: 2.5rem 2rem 2.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        circle at top right,
+        rgba(56, 189, 248, 0.18),
+        transparent 55%
+      );
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.85);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .pill span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+    h1 {
+      font-size: 1.9rem;
+      margin: 0 0 0.35rem;
+      letter-spacing: 0.02em;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .updated {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      margin-top: 1.6rem;
+      margin-bottom: 0.4rem;
+      font-size: 1.05rem;
+      border-left: 3px solid var(--accent);
+      padding-left: 0.5rem;
+    }
+    p {
+      margin: 0.35rem 0;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    ul {
+      margin: 0.35rem 0 0.75rem 1.25rem;
+      padding: 0;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    li {
+      margin-bottom: 0.25rem;
+    }
+    .highlight-box {
+      border-radius: 0.9rem;
+      border: 1px solid var(--accent-soft);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .highlight-title {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.15rem;
+      font-size: 0.83rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 1.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.5);
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 1.75rem 1.25rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Terms of Service</h1>
-  <p>
-    Bienvenido a Proyecto X. Al utilizar esta plataforma, aceptas estos Términos de Servicio.
-  </p>
+<div class="page">
+  <main class="card">
+    <div class="card-inner">
+      <div class="pill">
+        <span></span>
+        Legal Terms & Conditions
+      </div>
+      <h1>Terms of Service</h1>
+      <p class="subtitle">
+        Please read these Terms carefully before purchasing or accessing any
+        digital training content from Proyecto X.
+      </p>
+      <p class="updated"><strong>Last updated:</strong> March 2025</p>
 
-  <h2>Uso del contenido</h2>
-  <p>
-    Los materiales ofrecidos son exclusivamente de uso personal. No está permitido distribuir,
-    revender, compartir ni publicar el contenido sin autorización.
-  </p>
+      <div class="highlight-box">
+        <div class="highlight-title">Summary (not a substitute for the full Terms)</div>
+        <p>
+          Proyecto X offers instant-access digital training. Payments are processed
+          securely by <strong>Paddle</strong> as Merchant of Record. Access is personal
+          and non-transferable. A limited 24-hour refund window applies only under
+          specific conditions described below.
+        </p>
+      </div>
 
-  <h2>Pagos</h2>
-  <p>
-    Todos los pagos son procesados de forma segura a través de Paddle.
-    Al realizar una compra, aceptas los términos de Paddle y las condiciones del producto adquirido.
-  </p>
+      <h2>1. About Proyecto X</h2>
+      <p>
+        Proyecto X is an online platform operated from the Dominican Republic that
+        provides digital educational content, including pre-recorded video modules,
+        scripts and related materials (collectively, the “Digital Products”).
+      </p>
+      <p>
+        The Service is aimed primarily at professionals seeking to improve their sales
+        skills with clients based in the United States and other markets.
+      </p>
 
-  <h2>Acceso al contenido</h2>
-  <p>
-    El acceso a los módulos es inmediato después de completar el pago.
-    Si detectamos fraude o abuso, se puede revocar el acceso.
-  </p>
+      <h2>2. Merchant of Record & Payments</h2>
+      <p>
+        All payments are processed by <strong>Paddle</strong>, which acts as the
+        Merchant of Record. Paddle is responsible for billing, payment collection,
+        tax calculation and compliance with card network rules.
+      </p>
+      <p>
+        When you complete a purchase, your payment contract is with Paddle. Proyecto X
+        does not store your full payment card details.
+      </p>
 
-  <h2>Reembolsos</h2>
-  <p>
-    Los reembolsos se manejan según la política de reembolsos de Proyecto X y Paddle.
-  </p>
+      <h2>3. Eligibility</h2>
+      <p>By using the Service, you represent and warrant that you:</p>
+      <ul>
+        <li>Are at least 18 years old or the age of majority in your jurisdiction.</li>
+        <li>Have the legal capacity to enter into a binding contract.</li>
+        <li>Will use the Service only for lawful purposes and in accordance with these Terms.</li>
+      </ul>
 
-  <h2>Contacto</h2>
-  <p>Puedes contactarnos a: soporte@proyectox.com</p>
+      <h2>4. Access to Digital Products</h2>
+      <p>
+        Upon successful payment confirmation from Paddle, you are granted access to
+        the purchased Digital Product. Unless otherwise stated in writing, access is:
+      </p>
+      <ul>
+        <li><strong>Personal</strong> – only you are permitted to use the content.</li>
+        <li><strong>Non-transferable</strong> – you may not share or resell access.</li>
+        <li><strong>Non-exclusive</strong> – we may sell the same content to other users.</li>
+      </ul>
+
+      <h2>5. Intellectual Property</h2>
+      <p>
+        All videos, scripts, lesson structures, documentation, branding and other
+        materials available through the Service are protected by copyright and other
+        intellectual property laws in the Dominican Republic, the United States and
+        other jurisdictions.
+      </p>
+      <p>You agree that you will not:</p>
+      <ul>
+        <li>Copy, record, distribute or publicly display any Digital Product.</li>
+        <li>Upload any portion of our content to social media, public forums or file-sharing sites.</li>
+        <li>Resell, sublicense or provide access to any third party without written permission.</li>
+      </ul>
+
+      <h2>6. Prohibited Uses</h2>
+      <p>
+        You may not use the Service in any way that violates applicable law or these Terms, including:
+      </p>
+      <ul>
+        <li>Engaging in fraud, misrepresentation or unauthorized access.</li>
+        <li>Attempting to interfere with the security or integrity of the Service.</li>
+        <li>Reverse engineering, scraping or exploiting vulnerabilities in the Service.</li>
+      </ul>
+
+      <h2>7. Pricing, Taxes and Currency</h2>
+      <p>
+        Prices for Digital Products are displayed prior to checkout and may be updated
+        from time to time. Any applicable taxes (such as VAT or sales taxes) are
+        calculated and collected by Paddle based on your location and applicable law.
+      </p>
+      <p>
+        Charges will appear on your statement using the descriptors provided by Paddle
+        and may reference Paddle as the Merchant of Record.
+      </p>
+
+      <h2>8. Limited Refund Policy</h2>
+      <p>
+        Because our Digital Products are delivered with instant access, refunds are
+        limited and subject to the separate
+        <a href="/refund.html">Refund Policy</a>. In summary:
+      </p>
+      <ul>
+        <li>You may request a refund within <strong>24 hours</strong> of completing the purchase.</li>
+        <li>No refund is available once that 24-hour period has expired.</li>
+        <li>No refund is available if the Digital Product has been <strong>fully consumed</strong> (e.g., the video has been watched to completion).</li>
+      </ul>
+      <p>
+        Proyecto X reserves the right to review technical usage data (such as playback
+        progress logs, access times and IP information) to determine whether a Digital
+        Product has been consumed in full before deciding on any refund request.
+      </p>
+
+      <h2>9. Disclaimer of Results</h2>
+      <p>
+        The Service provides educational information only. We do not guarantee any
+        particular financial, professional or business outcome. Your results depend on
+        your own skills, decisions and circumstances.
+      </p>
+
+      <h2>10. Limitation of Liability</h2>
+      <p>
+        To the maximum extent permitted by applicable law, Proyecto X shall not be liable
+        for any indirect, incidental, special, consequential or punitive damages, or for
+        any loss of profits or revenues, arising out of or relating to your use of the
+        Service or Digital Products.
+      </p>
+      <p>
+        In any case, our total aggregate liability for any claim shall not exceed the
+        amount actually paid by you for the Digital Product giving rise to the claim.
+      </p>
+
+      <h2>11. Modifications to the Service and Terms</h2>
+      <p>
+        We may modify, suspend or discontinue any part of the Service at any time.
+        We may also update these Terms from time to time. When we do, we will change
+        the “Last updated” date at the top of this page. Your continued use of the
+        Service after changes take effect constitutes acceptance of the updated Terms.
+      </p>
+
+      <h2>12. Governing Law and Jurisdiction</h2>
+      <p>
+        These Terms are governed by the laws of the <strong>Dominican Republic</strong>,
+        without regard to conflict-of-law rules. Consumers located in the United States
+        may also benefit from mandatory protections under federal and state consumer laws.
+      </p>
+
+      <h2>13. Contact Information</h2>
+      <p>
+        If you have any questions regarding these Terms, please contact us at:<br />
+        <strong>support@proyectox.com</strong> (replace with your actual support email).
+      </p>
+
+      <p class="note">
+        This document is a general legal framework for operating a digital training
+        service and is not a substitute for independent legal advice. If you have
+        specific questions about your rights, you should consult a qualified attorney
+        in your jurisdiction.
+      </p>
+    </div>
+  </main>
+</div>
 </body>
 </html>
