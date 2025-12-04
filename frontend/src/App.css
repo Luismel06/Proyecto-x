@@ -63,7 +63,7 @@ body {
   justify-content: center;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #020617;
+  color: #ffffff;
 }
 
 .nav-title {
@@ -88,7 +88,7 @@ body {
   background: radial-gradient(circle at top left, #020617 0%, #020617 40%, #020617 100%);
   border-radius: 1.25rem;
   border: 1px solid rgba(148, 163, 184, 0.25);
-  box-shadow: 0 25px 50px rgba(15, 23, 42, 0.7);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
   padding: 2rem;
 }
 
@@ -279,6 +279,7 @@ body {
 
 
 
+
 .video-preview-tag {
   position: absolute;
   top: 12px;
@@ -289,6 +290,7 @@ body {
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
+
 
 .video-title {
   font-size: 1.2rem;
@@ -363,7 +365,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   background: linear-gradient(135deg, #22c55e, #16a34a);
-  color: #020617;
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;

@@ -16,7 +16,7 @@ export default function HomePage({ onOpenVideo, userEmail, setUserEmail }) {
         setVideos(data);
       } catch (err) {
         console.error(err);
-        setError("No se pudo cargar el catálogo de videos.");
+        setError("Failed to load the video catalog.");
       } finally {
         setLoading(false);
       }
@@ -38,42 +38,43 @@ export default function HomePage({ onOpenVideo, userEmail, setUserEmail }) {
   return (
     <main className="page">
       <section className="catalog-layout">
-        {/* Columna izquierda: correo, búsqueda y lista */}
+        {/* Left column: email, search, and list */}
         <div className="catalog-main">
           <header className="catalog-header">
-            <h2>Módulos disponibles</h2>
-            <p>Haz clic en un módulo para ver los detalles y comprar el acceso.</p>
+            <h2>Available Modules</h2>
+            <p>Click on a module to view details and purchase access.</p>
           </header>
 
           <div className="catalog-controls">
             <div className="control-group">
-              <label htmlFor="email">Correo para acceder a los módulos</label>
+              <label htmlFor="email">Email to access the modules</label>
               <input
                 id="email"
                 type="email"
-                placeholder="tu-correo@ejemplo.com"
+                placeholder="your-email@example.com"
                 value={userEmail}
                 onChange={handleEmailChange}
               />
               <small>
-                Usaremos este correo para reconocer tus compras y desbloquear los
-                videos automáticamente.
+                We will use this email to recognize your purchases and unlock the
+                videos automatically.
               </small>
             </div>
 
             <div className="control-group">
-              <label htmlFor="search">Buscar módulo</label>
+              <label htmlFor="search">Search module</label>
               <input
                 id="search"
                 type="text"
-                placeholder="Escribe el nombre del módulo..."
+                placeholder="Type the name of the module..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
 
-          {loading && <p style={{ marginTop: "1rem" }}>Cargando catálogo...</p>}
+          {loading && <p style={{ marginTop: "1rem" }}>Loading catalog...</p>}
+
           {error && (
             <p style={{ marginTop: "1rem", color: "#fca5a5" }}>{error}</p>
           )}
@@ -82,14 +83,14 @@ export default function HomePage({ onOpenVideo, userEmail, setUserEmail }) {
             <div className="modules-list">
               {filteredVideos.length === 0 ? (
                 <p className="small-text">
-                  No encontramos módulos que coincidan con tu búsqueda.
+                  No modules found matching your search.
                 </p>
               ) : (
                 filteredVideos.map((video) => (
                   <VideoCard
                     key={video.id}
                     video={video}
-                    onOpen={() => onOpenVideo(video)} // 👈 igual que tu código viejo
+                    onOpen={() => onOpenVideo(video)}
                   />
                 ))
               )}
@@ -97,23 +98,23 @@ export default function HomePage({ onOpenVideo, userEmail, setUserEmail }) {
           )}
         </div>
 
-        {/* Columna derecha: imagen + texto */}
+        {/* Right column: image + text */}
         <aside className="catalog-aside">
           <div className="catalog-hero-card">
             <img
               src="/sales-hero.jpg"
-              alt="Entrenamiento de ventas para vendedores de EE. UU."
+              alt="Sales training for agents working with U.S. clients"
             />
             <div className="hero-text">
               <h3>Sales Video Academy</h3>
               <p>
-                Entrenamientos prácticos diseñados para vendedores que trabajan con
-                clientes en Estados Unidos. Aprende guiones, manejo de objeciones y
-                cierres probados en campo real.
+                Hands-on training designed for sales agents who work with customers
+                in the United States. Learn scripts, objection handling, and proven
+                closing techniques from real-world experience.
               </p>
               <p className="hero-sub">
-                Comienza registrando tu correo y elige el módulo que más se adapta a
-                tu nivel actual.
+                Start by entering your email and choosing the module that best fits
+                your current level.
               </p>
             </div>
           </div>

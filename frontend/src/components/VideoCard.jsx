@@ -10,7 +10,9 @@ export default function VideoCard({ video, onOpen }) {
         background:
           "radial-gradient(circle at top left, #111827 0, #020617 60%, #020617 100%)",
         padding: "0.85rem 1rem",
-        cursor: "pointer"
+        cursor: "pointer",
+        color: "white"
+
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
