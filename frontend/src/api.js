@@ -24,3 +24,19 @@ export async function checkAccess(userEmail, videoId) {
 
   return res.json();
 }
+const API_BASE = "http://localhost:4000/api/orders"; // ya la usábamos
+
+export async function getVideos() {
+  const res = await fetch(`${API_BASE}/videos`);
+
+  if (!res.ok) {
+    throw new Error("Error al cargar el catálogo de videos");
+  }
+
+  const data = await res.json();
+  // Aseguramos que el precio sea número
+  return data.videos.map((v) => ({
+    ...v,
+    precio: Number(v.precio),
+  }));
+}
