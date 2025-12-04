@@ -100,27 +100,18 @@ export default function VideoPage({ video, userEmail, goHome }) {
             </>
           )}
         </div>
+          <div className="video-preview-card">
+  <span className="badge">Vista del contenido</span>
 
-        <div className="video-preview">
-          <span className="video-preview-tag">Vista del contenido</span>
-          <div
-            style={{
-              borderRadius: "0.9rem",
-              border: "1px solid rgba(148,163,184,0.4)",
-              height: 220,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "0.85rem",
-              color: "var(--muted)",
-              textAlign: "center",
-              padding: "0 1rem"
-            }}
-          >
-            Aquí va el reproductor con la URL privada del video de Proyecto X.
-            Por ahora puedes dejar un placeholder mientras terminas la integración.
-          </div>
-        </div>
+  <div className="video-player-placeholder">
+    <img
+      src="/preview-locked.png"
+      alt="Vista previa del módulo exclusivo de Proyecto X"
+    />
+  </div>
+</div>
+
+
       </div>
     </div>
   );

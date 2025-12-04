@@ -155,6 +155,130 @@ body {
   overflow: hidden;
 }
 
+
+.video-player-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+}
+
+.catalog-layout {
+  display: grid;
+  grid-template-columns: 2fr 1.1fr;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.catalog-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.catalog-header h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.catalog-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.control-group {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.control-group label {
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.control-group input {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.85);
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  color: #f9fafb;
+  outline: none;
+}
+
+.control-group input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+}
+
+.control-group small {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.modules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Lado derecho */
+
+.catalog-aside {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.catalog-hero-card {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 24px;
+  padding: 1.25rem;
+  background: radial-gradient(circle at top, #1f2937, #020617);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.catalog-hero-card img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.catalog-hero-card .hero-text h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.35rem;
+}
+
+.catalog-hero-card .hero-text p {
+  font-size: 0.86rem;
+  color: #cbd5f5;
+}
+
+.catalog-hero-card .hero-text .hero-sub {
+  margin-top: 0.35rem;
+  color: #a5b4fc;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .catalog-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-aside {
+    justify-content: stretch;
+  }
+}
+
+
+
 .video-preview-tag {
   position: absolute;
   top: 12px;
