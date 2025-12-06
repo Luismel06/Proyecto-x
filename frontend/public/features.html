@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Features · Sales Video Academy</title>
+    <meta
+      name="description"
+      content="Key features of Sales Video Academy, a video training platform for sales agents working with U.S. customers."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+
+    <style>
+      :root {
+        --bg-dark: #020617;
+        --bg-soft: #020617;
+        --bg-card: #020617;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.16);
+        --accent-strong: #4ade80;
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+        --border-soft: rgba(148, 163, 184, 0.35);
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.9);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: radial-gradient(circle at top, #0f172a, #020617 60%);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* NAVBAR con animaciones */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.9rem 2.5rem;
+        background: rgba(2, 6, 23, 0.9);
+        backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.92);
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .nav-badge {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 0, #bbf7d0, #16a34a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.8rem;
+        color: #022c22;
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.45);
+        animation: floatBadge 3.4s ease-in-out infinite;
+      }
+
+      @keyframes floatBadge {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-2px);
+        }
+      }
+
+      .brand-block {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand-title {
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.03em;
+      }
+
+      .brand-sub {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+      }
+
+      .nav-link {
+        position: relative;
+        font-size: 0.86rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding-bottom: 0.15rem;
+        transition: color 0.2s ease, transform 0.2s ease;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -0.08rem;
+        width: 100%;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(to right, #16a34a, #4ade80);
+        transform-origin: center;
+        transform: scaleX(0);
+        transition: transform 0.22s ease-out;
+      }
+
+      .nav-link:hover {
+        color: var(--accent-strong);
+        transform: translateY(-1px);
+      }
+
+      .nav-link:hover::after {
+        transform: scaleX(1);
+      }
+
+      .nav-link.active {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .nav-link.active::after {
+        transform: scaleX(1);
+      }
+
+      /* PAGE LAYOUT */
+      .page {
+        flex: 1;
+        padding: 2.5rem 1.25rem 3rem;
+        display: flex;
+        justify-content: center;
+      }
+
+      .page-inner {
+        width: 100%;
+        max-width: 1080px;
+      }
+
+      .page-header {
+        margin-bottom: 2rem;
+      }
+
+      .page-kicker {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        color: var(--accent);
+        margin-bottom: 0.35rem;
+      }
+
+      .page-title {
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .page-subtitle {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        max-width: 620px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.2fr);
+        gap: 2rem;
+        align-items: flex-start;
+      }
+
+      @media (max-width: 900px) {
+        .features-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      /* FEATURE CARDS */
+      .feature-list {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+      }
+
+      .feature-card {
+        border-radius: 18px;
+        padding: 1.1rem 1.2rem;
+        background: radial-gradient(
+          circle at top left,
+          rgba(30, 64, 175, 0.4),
+          #020617
+        );
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        box-shadow: 0 16px 38px rgba(15, 23, 42, 0.75);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .feature-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.74rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.35);
+        color: #a5f3fc;
+        margin-bottom: 0.35rem;
+      }
+
+      .feature-title {
+        font-size: 0.98rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .feature-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .feature-highlight {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at top right,
+          rgba(34, 197, 94, 0.2),
+          transparent 55%
+        );
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease-out;
+      }
+
+      .feature-card:hover .feature-highlight {
+        opacity: 1;
+      }
+
+      /* SIDEBAR: HOW IT WORKS */
+      .sidebar {
+        border-radius: 20px;
+        padding: 1.6rem 1.7rem;
+        background: radial-gradient(circle at top, #0b1220, #020617);
+        border: 1px solid var(--border-soft);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .sidebar-kicker {
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--accent-strong);
+        margin-bottom: 0.4rem;
+      }
+
+      .sidebar-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 0.55rem;
+      }
+
+      .sidebar-text {
+        font-size: 0.86rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .step {
+        display: flex;
+        gap: 0.6rem;
+      }
+
+      .step-number {
+        width: 24px;
+        height: 24px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .step-body {
+        font-size: 0.84rem;
+      }
+
+      .step-title {
+        font-weight: 600;
+        margin-bottom: 0.1rem;
+      }
+
+      .step-desc {
+        color: var(--text-muted);
+      }
+
+      .sidebar-note {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .sidebar-note strong {
+        color: var(--text-main);
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      a:hover {
+        color: var(--accent-strong);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVBAR con animaciones -->
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="nav-badge">PX</div>
+        <div class="brand-block">
+          <div class="brand-title">Sales Video Academy</div>
+          <div class="brand-sub">Video training for U.S. sales calls</div>
+        </div>
+      </div>
+      <nav class="nav-right">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/pricing.html" class="nav-link">Pricing</a>
+        <a href="/features.html" class="nav-link active">Features</a>
+        <a href="/terms.html" class="nav-link">Terms</a>
+        <a href="/privacy.html" class="nav-link">Privacy</a>
+        <a href="/refund.html" class="nav-link">Refunds</a>
+      </nav>
+    </header>
+
+    <main class="page">
+      <div class="page-inner">
+        <header class="page-header">
+          <div class="page-kicker">Features</div>
+          <h1 class="page-title">
+            Everything your sales calls need in one training platform
+          </h1>
+          <p class="page-subtitle">
+            Sales Video Academy is designed for agents, SDRs and closers who
+            talk every day with customers in the United States. Each module is
+            focused, practical and ready to apply on your next call.
+          </p>
+        </header>
+
+        <section class="features-grid">
+          <!-- LEFT: feature cards -->
+          <div class="feature-list">
+            <article class="feature-card">
+              <div class="feature-highlight"></div>
+              <div class="feature-pill">
+                <span>US-focused</span>
+              </div>
+              <h2 class="feature-title">
+                Built specifically for U.S. customers and call centers
+              </h2>
+              <p class="feature-desc">
+                The content, examples and scripts are designed for calls with
+                U.S.-based clients. You’ll learn tone, phrasing and objections
+                that appear every day in real American markets.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-highlight"></div>
+              <div class="feature-pill">
+                <span>Actionable</span>
+              </div>
+              <h2 class="feature-title">
+                Concrete scripts, frameworks and objection handling
+              </h2>
+              <p class="feature-desc">
+                Each module includes ready-to-use scripts, question flows and
+                structures you can copy, adapt and use in live calls – not just
+                theory or motivation.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-highlight"></div>
+              <div class="feature-pill">
+                <span>Lifetime access</span>
+              </div>
+              <h2 class="feature-title">
+                One-time payment, lifetime access to the module
+              </h2>
+              <p class="feature-desc">
+                You pay once for each module and keep access forever, including
+                future updates and improvements to the content.
+              </p>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-highlight"></div>
+              <div class="feature-pill">
+                <span>Level-based</span>
+              </div>
+              <h2 class="feature-title">
+                Modules organized by skill level and focus
+              </h2>
+              <p class="feature-desc">
+                Start with fundamentals, move into advanced attraction
+                strategies, and finish with high-level closing and scaling
+                techniques. You can buy only the modules you need right now.
+              </p>
+            </article>
+          </div>
+
+          <!-- RIGHT: How it works -->
+          <aside class="sidebar">
+            <div class="sidebar-kicker">How it works</div>
+            <h2 class="sidebar-title">
+              From first visit to unlocked video in a few minutes
+            </h2>
+            <p class="sidebar-text">
+              Sales Video Academy is a simple, email-based access system.
+              There’s no complex login – your email is your key.
+            </p>
+
+            <div class="steps">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-body">
+                  <div class="step-title">Choose your module</div>
+                  <div class="step-desc">
+                    On the main platform, browse the catalog and select the
+                    module that fits your current goals (opening calls,
+                    objections, closing, personal brand, etc.).
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-body">
+                  <div class="step-title">Enter your email and complete payment</div>
+                  <div class="step-desc">
+                    Type the email you use for work and complete the payment
+                    securely via our provider. We’ll link your purchase to that
+                    email automatically.
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-body">
+                  <div class="step-title">Access the video and train at your pace</div>
+                  <div class="step-desc">
+                    Once the payment is confirmed, the system unlocks the
+                    module. You can watch, pause and rewatch as many times as
+                    you need, whenever you want.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="sidebar-note">
+              For more details about pricing, visit our
+              <a href="/pricing.html">Pricing page</a>. For information about
+              refunds and data protection, please see our
+              <a href="/terms.html">Terms &amp; Conditions</a>,
+              <a href="/privacy.html">Privacy Policy</a> and
+              <a href="/refund.html">Refund Policy</a>.
+            </p>
+          </aside>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

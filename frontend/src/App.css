@@ -13,6 +13,35 @@
 * {
   box-sizing: border-box;
 }
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 2.5rem;
+  background: #020617;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.nav-left .brand {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #e5e7eb;
+  text-decoration: none;
+}
+
+.nav-right a {
+  color: #e5e7eb;
+  text-decoration: none;
+  margin-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.nav-right a:hover {
+  color: #22c55e;
+  text-decoration: underline;
+}
+
 
 body {
   margin: 0;

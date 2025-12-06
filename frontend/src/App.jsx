@@ -1,6 +1,7 @@
 import { useState } from "react";
 import HomePage from "./pages/HomePage.jsx";
 import VideoPage from "./pages/VideoPage.jsx";
+import Navbar from "./components/Navbar.jsx";
 import "./App.css";
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
   return (
     <div className="app-root">
       <div className="app-shell">
-        {/* Navbar simple */}
+      <Navbar />
         <header className="navbar">
           <div className="nav-logo">
             <div className="nav-mark">PX</div>
