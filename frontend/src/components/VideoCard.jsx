@@ -26,7 +26,7 @@ export default function VideoCard({ video, onOpen }) {
         </div>
         <div style={{ textAlign: "right" }}>
           <div className="price-main">${video.precio}</div>
-          <div className="price-sub">Pago único</div>
+          <div className="price-sub">One Time Payment</div>
         </div>
       </div>
     </button>
