@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thank you for your purchase · Sales Video Academy</title>
+    <meta
+      name="description"
+      content="Thank you for purchasing access to Sales Video Academy. Use the same email to unlock your training modules."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <style>
+      :root {
+        --bg: #020617;
+        --card: #020617;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.12);
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          "Segoe UI", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          #1d4ed8 0,
+          #020617 40%,
+          #000 100%
+        );
+        color: var(--text);
+      }
+
+      .app-shell {
+        max-width: 1100px;
+        margin: 2.5rem auto;
+        padding: 0 1.5rem 2.5rem;
+      }
+
+      /* NAVBAR (igual estilo que pricing/features) */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.9rem 1.25rem;
+        margin-bottom: 2rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: radial-gradient(
+          circle at top left,
+          rgba(15, 23, 42, 0.95),
+          #020617
+        );
+        backdrop-filter: blur(16px);
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .nav-mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #22c55e, #16a34a, #0f172a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #ffffff;
+      }
+
+      .nav-brand-title {
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .nav-brand-sub {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .nav-right {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        font-size: 0.85rem;
+      }
+
+      .nav-link {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        color: #e5e7eb;
+      }
+
+      .nav-chip {
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      /* CARD THANK YOU */
+
+      .thankyou-card {
+        margin-top: 1rem;
+        padding: 2.25rem 2.5rem;
+        border-radius: 1.5rem;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: radial-gradient(
+          circle at top left,
+          rgba(30, 64, 175, 0.3),
+          #020617 60%,
+          #020617 100%
+        );
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+        gap: 2.25rem;
+        align-items: center;
+      }
+
+      @media (max-width: 900px) {
+        .app-shell {
+          margin-top: 1.5rem;
+          padding: 0 1rem 2rem;
+        }
+
+        .navbar {
+          border-radius: 1rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.6rem;
+        }
+
+        .thankyou-card {
+          grid-template-columns: 1fr;
+          padding: 1.75rem 1.5rem;
+        }
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.85rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border: 1px solid rgba(34, 197, 94, 0.6);
+        font-size: 0.8rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .pill span.icon {
+        font-size: 1rem;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+        margin: 0 0 0.6rem;
+      }
+
+      .lead {
+        font-size: 0.95rem;
+        color: var(--muted);
+        max-width: 38rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .highlight-box {
+        border-radius: 1rem;
+        padding: 0.9rem 1rem;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px dashed rgba(148, 163, 184, 0.6);
+        font-size: 0.85rem;
+        color: #e5e7eb;
+        margin-bottom: 1.25rem;
+      }
+
+      .highlight-box strong {
+        color: #fbbf24;
+      }
+
+      .steps-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+      }
+
+      .steps-list li::before {
+        content: "•";
+        color: var(--accent);
+        margin-right: 0.45rem;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+      }
+
+      .btn-primary {
+        padding: 0.7rem 1.4rem;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .btn-secondary {
+        padding: 0.65rem 1.2rem;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.9);
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-decoration: none;
+      }
+
+      .meta-text {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-top: 0.75rem;
+      }
+
+      /* Right side */
+
+      .summary-card {
+        border-radius: 1.25rem;
+        padding: 1.4rem 1.5rem;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: radial-gradient(
+          circle at top,
+          rgba(30, 64, 175, 0.35),
+          #020617 70%
+        );
+      }
+
+      .summary-title {
+        font-size: 0.95rem;
+        margin-bottom: 0.6rem;
+      }
+
+      .summary-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .summary-label {
+        color: var(--muted);
+      }
+
+      .summary-value {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Navbar -->
+      <header class="navbar">
+        <div class="nav-left">
+          <div class="nav-mark">PX</div>
+          <div>
+            <div class="nav-brand-title">Proyecto X</div>
+            <div class="nav-brand-sub">Sales Video Academy</div>
+          </div>
+        </div>
+        <nav class="nav-right">
+          <a class="nav-link" href="/">Catalog</a>
+          <a class="nav-link" href="/pricing.html">Pricing</a>
+          <a class="nav-link" href="/features.html">Features</a>
+          <span class="nav-chip">Training for U.S. sales agents</span>
+        </nav>
+      </header>
+
+      <!-- Thank you content -->
+      <main class="thankyou-card">
+        <section>
+          <div class="pill">
+            <span class="icon">✅</span>
+            <span>Payment confirmed</span>
+          </div>
+
+          <h1>Thank you for your purchase!</h1>
+
+          <p class="lead">
+            Your order has been processed successfully. Your access to the
+            selected module will be activated in a few moments.
+          </p>
+
+          <div class="highlight-box">
+            Use the <strong>same email</strong> you entered during checkout to
+            unlock your videos inside Sales Video Academy.
+          </div>
+
+          <ul class="steps-list">
+            <li>Go back to the main catalog.</li>
+            <li>Enter the same email in the “Email used to unlock your modules” field.</li>
+            <li>Click on the module you just purchased. The platform will check your access automatically.</li>
+          </ul>
+
+          <div class="cta-row">
+            <a href="/" class="btn-primary">
+              ← Back to catalog
+            </a>
+            <a href="mailto:support@proyectox.example"
+               class="btn-secondary">
+              Need help? Contact support
+            </a>
+          </div>
+
+          <p class="meta-text">
+            If you don’t see access after a few minutes, refresh the page. In rare
+            cases, payment confirmation from Paddle may take a short moment.
+          </p>
+        </section>
+
+        <aside class="summary-card">
+          <div class="summary-title">Next steps</div>
+          <div class="summary-line">
+            <span class="summary-label">1.</span>
+            <span class="summary-value">Save this page or bookmark the catalog URL.</span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">2.</span>
+            <span class="summary-value">Always log in using the same email.</span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">3.</span>
+            <span class="summary-value">Start watching your training module.</span>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>

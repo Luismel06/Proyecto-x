@@ -1,3 +1,4 @@
+// frontend/src/pages/VideoPage.jsx
 import { useEffect, useState } from "react";
 import { createCheckout, checkAccess } from "../api.js";
 
@@ -6,6 +7,7 @@ export default function VideoPage({ video, userEmail, goHome }) {
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
+  // 🔹 Verificar acceso al cargar la página
   useEffect(() => {
     if (!userEmail) {
       setLoading(false);
@@ -14,10 +16,12 @@ export default function VideoPage({ video, userEmail, goHome }) {
 
     const fetchAccess = async () => {
       try {
+        console.log("[VideoPage] Checking access for", userEmail, "video", video.id);
         const res = await checkAccess(userEmail, video.id);
+        console.log("[VideoPage] /access/check response:", res);
         setHasAccess(res.hasAccess);
       } catch (err) {
-        console.error(err);
+        console.error("[VideoPage] Error checking access:", err);
       } finally {
         setLoading(false);
       }
@@ -26,20 +30,34 @@ export default function VideoPage({ video, userEmail, goHome }) {
     fetchAccess();
   }, [userEmail, video.id]);
 
+  // 🔹 Handler de checkout
   const handleCheckout = async () => {
+    console.log("[VideoPage] handleCheckout clicked", {
+      userEmail,
+      videoId: video.id,
+    });
+
     if (!userEmail) {
-      alert("You must enter your email on the main screen.");
+      alert("You must enter your email on the main screen before buying.");
       return;
     }
 
     try {
       setCheckoutLoading(true);
+      console.log("[VideoPage] Calling createCheckout...");
       const res = await createCheckout(userEmail, video.id);
-      // Redirect to payment provider
+      console.log("[VideoPage] createCheckout response:", res);
+
+      if (!res || !res.paymentUrl) {
+        alert("Could not obtain the payment link from Paddle.");
+        return;
+      }
+
+      // 🔹 Redirigir a Paddle
       window.location.href = res.paymentUrl;
     } catch (err) {
-      console.error(err);
-      alert("Error initiating the payment.");
+      console.error("[VideoPage] Error initiating payment:", err);
+      alert(err.message || "Error initiating the payment.");
     } finally {
       setCheckoutLoading(false);
     }
@@ -47,7 +65,7 @@ export default function VideoPage({ video, userEmail, goHome }) {
 
   return (
     <div className="card">
-      <button className="btn-secondary" onClick={goHome}>
+      <button type="button" className="btn-secondary" onClick={goHome}>
         ← Back to catalog
       </button>
 
@@ -55,7 +73,10 @@ export default function VideoPage({ video, userEmail, goHome }) {
         <div>
           <div className="badge">Exclusive Module</div>
 
-          <h2 className="title" style={{ fontSize: "1.5rem", marginTop: "0.7rem" }}>
+          <h2
+            className="title"
+            style={{ fontSize: "1.5rem", marginTop: "0.7rem" }}
+          >
             {video.titulo}
           </h2>
 
@@ -87,11 +108,12 @@ export default function VideoPage({ video, userEmail, goHome }) {
               </div>
               <p className="small-text">
                 Complete the card payment and the system will automatically unlock
-                the video.
+                the video once Paddle confirms the transaction.
               </p>
 
               <div className="button-row">
                 <button
+                  type="button"
                   onClick={handleCheckout}
                   className="btn-primary"
                   disabled={checkoutLoading}
@@ -109,7 +131,7 @@ export default function VideoPage({ video, userEmail, goHome }) {
           <div className="video-player-placeholder">
             <img
               src="/preview-locked.png"
-              alt="Preview of the exclusive module from Project X"
+              alt="Preview of the exclusive module from Sales Video Academy"
             />
           </div>
         </div>
