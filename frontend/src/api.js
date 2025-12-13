@@ -1,65 +1,115 @@
 // frontend/src/api.js
 
-// 🔹 Host del backend: toma de la env var, y si no existe usa localhost (modo dev)
-const API_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+// Host del backend: toma de la env var, y si no existe usa localhost (modo dev)
+const RAW_HOST = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
 
-// 🔹 Base común para todas las rutas del backend
+// Normaliza (quita slash final)
+const API_HOST = RAW_HOST.replace(/\/$/, "");
+
+// Base común
 const API_BASE = `${API_HOST}/api/orders`;
 
-/**
- * Crear checkout en el backend (que internamente habla con Paddle).
- */
-export async function createCheckout(userEmail, videoId) {
-  const res = await fetch(`${API_BASE}/checkout`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userEmail, videoId }),
-  });
+// Detectar ngrok (free)
+const IS_NGROK =
+  API_HOST.includes("ngrok-free.dev") ||
+  API_HOST.includes("ngrok-free.app") ||
+  API_HOST.includes("ngrok.io");
 
-  let payload = null;
-  try {
-    payload = await res.json();
-  } catch (_) {
-    // si no hay body JSON, lo dejamos en null
+// Headers base
+function buildHeaders(extra = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...extra,
+  };
+
+  // 🔥 Esto evita que ngrok te devuelva HTML "warning" en lugar del JSON
+  if (IS_NGROK) {
+    headers["ngrok-skip-browser-warning"] = "true";
   }
 
+  return headers;
+}
+
+// Fetch JSON seguro (si llega HTML, te lo reporta)
+async function fetchJson(url, options = {}) {
+  const res = await fetch(url, {
+    ...options,
+    headers: buildHeaders(options.headers || {}),
+  });
+
+  const contentType = res.headers.get("content-type") || "";
+  const text = await res.text(); // leemos como texto primero
+
+  // Si no es OK, intentamos extraer error JSON o damos el texto
   if (!res.ok) {
-    console.error("Checkout error response:", payload);
+    let payload = null;
+    try {
+      payload = JSON.parse(text);
+    } catch (_) {}
+
     const msg =
-      payload?.error || payload?.message || "Error creating checkout";
+      payload?.error ||
+      payload?.message ||
+      `Request failed (${res.status})`;
+
+    console.error("API ERROR:", {
+      url,
+      status: res.status,
+      contentType,
+      bodyPreview: text.slice(0, 200),
+    });
+
     throw new Error(msg);
   }
 
-  // esperamos { orderId, checkoutUrl }
-  return payload;
+  // OK, pero si es HTML, no es lo esperado
+  if (!contentType.includes("application/json")) {
+    console.error("Respuesta NO JSON:", {
+      url,
+      contentType,
+      bodyPreview: text.slice(0, 200),
+    });
+
+    // típico caso ngrok warning
+    if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+      throw new Error(
+        "Backend returned HTML instead of JSON. If you're using ngrok, it may be returning a warning page. (Header ngrok-skip-browser-warning should fix it)."
+      );
+    }
+
+    throw new Error("Backend response is not JSON.");
+  }
+
+  return JSON.parse(text);
 }
 
 /**
- * Verificar si el usuario tiene acceso a un video
+ * Crear checkout en el backend (que internamente habla con Paddle).
+ * Esperamos { orderId, checkoutUrl }
+ */
+export async function createCheckout(userEmail, videoId) {
+  return fetchJson(`${API_BASE}/checkout`, {
+    method: "POST",
+    body: JSON.stringify({ userEmail, videoId }),
+  });
+}
+
+/**
+ * Verificar acceso
  */
 export async function checkAccess(userEmail, videoId) {
   const params = new URLSearchParams({ userEmail, videoId });
-  const res = await fetch(`${API_BASE}/access/check?${params.toString()}`);
-
-  if (!res.ok) {
-    throw new Error("Error checking access");
-  }
-
-  return res.json(); // { hasAccess: boolean }
+  return fetchJson(`${API_BASE}/access/check?${params.toString()}`, {
+    method: "GET",
+  });
 }
 
 /**
  * Obtener catálogo de videos
  */
 export async function getVideos() {
-  const res = await fetch(`${API_BASE}/videos`);
+  const data = await fetchJson(`${API_BASE}/videos`, { method: "GET" });
 
-  if (!res.ok) {
-    throw new Error("Error loading video catalog");
-  }
-
-  const data = await res.json();
-  // En backend devolvemos { videos: [...] }
   const list = Array.isArray(data) ? data : data.videos || [];
 
   return list.map((v) => ({
