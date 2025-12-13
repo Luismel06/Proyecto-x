@@ -5,7 +5,6 @@ import { randomUUID, createHmac, timingSafeEqual } from "crypto";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 const router = express.Router();
 
 // ====== CONFIG ======
@@ -18,11 +17,11 @@ const VIDEO_PRICE_MAP = {
 };
 
 const PADDLE_API_KEY = process.env.PADDLE_API_KEY;
-const PADDLE_ENVIRONMENT = process.env.PADDLE_ENVIRONMENT || "sandbox"; // "sandbox" | "live"
+const PADDLE_ENVIRONMENT = process.env.PADDLE_ENVIRONMENT || "sandbox"; // sandbox | live
 const FRONTEND_BASE_URL =
   process.env.FRONTEND_BASE_URL || "https://proyecto-x-black.vercel.app";
 
-const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET || ""; // recomendable
+const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET || "";
 
 const PADDLE_API_URL =
   PADDLE_ENVIRONMENT === "live"
@@ -42,6 +41,7 @@ async function getOrCreateUserByEmail(userEmail) {
     .single();
 
   if (userError && userError.code !== "PGRST116") {
+    console.error("Error buscando usuario:", userError);
     throw new Error("Error al buscar usuario");
   }
 
@@ -52,7 +52,10 @@ async function getOrCreateUserByEmail(userEmail) {
       .select()
       .single();
 
-    if (newUserError) throw new Error("Error al crear usuario");
+    if (newUserError) {
+      console.error("Error creando usuario:", newUserError);
+      throw new Error("Error al crear usuario");
+    }
     user = newUser;
   }
 
@@ -70,12 +73,10 @@ async function getVideoById(videoId) {
   return video;
 }
 
-/**
- * Paddle signature verification (v2)
- * Header: Paddle-Signature: ts=...,h1=...
- */
 function verifyPaddleSignature({ rawBody, signatureHeader, secret }) {
-  if (!secret) return true; // si no quieres validar en dev, ok (pero en prod es mejor validar)
+  // En sandbox/dev puedes dejarlo vacío para no bloquearte,
+  // pero en Render PROD es MUY recomendado configurarlo.
+  if (!secret) return true;
   if (!signatureHeader) return false;
 
   const parts = Object.fromEntries(
@@ -87,7 +88,9 @@ function verifyPaddleSignature({ rawBody, signatureHeader, secret }) {
   if (!ts || !h1) return false;
 
   const signedPayload = `${ts}:${rawBody}`;
-  const digest = createHmac("sha256", secret).update(signedPayload).digest("hex");
+  const digest = createHmac("sha256", secret)
+    .update(signedPayload)
+    .digest("hex");
 
   try {
     return timingSafeEqual(Buffer.from(digest), Buffer.from(h1));
@@ -195,10 +198,7 @@ router.post("/checkout", async (req, res) => {
           email: userEmail,
         },
         collection_mode: "automatic",
-        checkout: {
-          // esto hace que al pagar vuelva a tu app
-          redirect_url: redirectUrl,
-        },
+        checkout: { redirect_url: redirectUrl },
       }),
     });
 
@@ -225,14 +225,13 @@ router.post("/checkout", async (req, res) => {
 
     if (updErr) {
       console.error("Error guardando provider_order_id:", updErr);
-      // no bloqueamos, pero lo reportamos
     }
 
     return res.json({
       orderId,
       transactionId: tx.id,
       checkoutUrl,
-      paymentUrl: checkoutUrl, // por compatibilidad con tu frontend
+      paymentUrl: checkoutUrl, // compat
     });
   } catch (err) {
     console.error("Error en /checkout:", err);
@@ -242,16 +241,15 @@ router.post("/checkout", async (req, res) => {
 
 /**
  * POST /api/orders/webhook
- * Paddle manda eventos como transaction.paid / transaction.completed.
- * OJO: este endpoint recibe raw body (configurado en server.js).
+ * Recibe RAW body (Buffer) gracias a server.js
  */
 router.post("/webhook", async (req, res) => {
   try {
-    // raw body (Buffer)
-    const raw = req.body;
+    const raw = req.body; // Buffer
     const rawBody = Buffer.isBuffer(raw) ? raw.toString("utf8") : "";
 
-    const signature = req.header("Paddle-Signature") || req.header("paddle-signature");
+    const signature =
+      req.header("Paddle-Signature") || req.header("paddle-signature");
 
     const valid = verifyPaddleSignature({
       rawBody,
@@ -268,22 +266,20 @@ router.post("/webhook", async (req, res) => {
     const eventType = event?.event_type;
     const data = event?.data;
 
-    // Nos interesan estos:
+    // Paddle v2 normalmente manda transaction.paid y/o transaction.completed
     const isPaid =
       eventType === "transaction.paid" || eventType === "transaction.completed";
 
-    // En Paddle, el transaction id es data.id
     const transactionId = data?.id;
     const custom = data?.custom_data || {};
     const orderId = custom?.orderId;
     const videoId = custom?.videoId;
     const userId = custom?.userId;
 
-    if (!transactionId) {
-      return res.status(200).json({ ok: true }); // ignorar eventos raros
-    }
+    // Si no hay transactionId, ignoramos
+    if (!transactionId) return res.status(200).json({ ok: true });
 
-    // Si no viene orderId en custom_data, buscamos por provider_order_id
+    // Buscar la orden por custom_data.orderId, o por provider_order_id
     let finalOrderId = orderId;
 
     if (!finalOrderId) {
@@ -297,14 +293,11 @@ router.post("/webhook", async (req, res) => {
     }
 
     if (!finalOrderId) {
-      // No encontramos la orden -> respondemos ok para que Paddle no reintente infinito,
-      // pero logueamos.
       console.warn("Webhook: order not found for transaction:", transactionId);
       return res.status(200).json({ ok: true });
     }
 
     if (isPaid) {
-      // 1) marcar pagado
       const { data: orderData, error: updErr } = await supabase
         .from("orders")
         .update({
@@ -321,7 +314,6 @@ router.post("/webhook", async (req, res) => {
         return res.status(500).json({ error: "Error actualizando orden" });
       }
 
-      // 2) crear acceso
       const uId = orderData.user_id || userId;
       const vId = orderData.video_id || videoId;
 
