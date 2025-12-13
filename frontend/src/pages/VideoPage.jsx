@@ -9,15 +9,16 @@ export default function VideoPage({ video, userEmail, goHome }) {
   useEffect(() => {
     if (!userEmail) {
       setLoading(false);
+      setHasAccess(false);
       return;
     }
 
     const fetchAccess = async () => {
       try {
-        const res = await checkAccess(userEmail, video.id);
-        setHasAccess(!!res.hasAccess);
+        const res = await checkAccess(userEmail, String(video.id));
+        setHasAccess(!!res?.hasAccess);
       } catch (err) {
-        console.error(err);
+        console.error("checkAccess error:", err);
         setHasAccess(false);
       } finally {
         setLoading(false);
@@ -35,10 +36,21 @@ export default function VideoPage({ video, userEmail, goHome }) {
 
     try {
       setCheckoutLoading(true);
+
       const res = await createCheckout(userEmail, video.id);
-      window.location.href = res.checkoutUrl || res.paymentUrl;
+
+      // Acepta ambos nombres: checkoutUrl (nuevo) o paymentUrl (viejo)
+      const redirectUrl = res?.checkoutUrl || res?.paymentUrl;
+
+      if (!redirectUrl) {
+        console.error("Checkout response missing URL:", res);
+        alert("Checkout created but no redirect URL was returned.");
+        return;
+      }
+
+      window.location.assign(redirectUrl);
     } catch (err) {
-      console.error(err);
+      console.error("handleCheckout error:", err);
       alert(err?.message || "Error initiating the payment.");
     } finally {
       setCheckoutLoading(false);
@@ -55,7 +67,10 @@ export default function VideoPage({ video, userEmail, goHome }) {
         <div>
           <div className="badge">Exclusive Module</div>
 
-          <h2 className="title" style={{ fontSize: "1.5rem", marginTop: "0.7rem" }}>
+          <h2
+            className="title"
+            style={{ fontSize: "1.5rem", marginTop: "0.7rem" }}
+          >
             {video.titulo}
           </h2>
 
@@ -76,10 +91,11 @@ export default function VideoPage({ video, userEmail, goHome }) {
               </div>
 
               <p className="small-text">
-                This video is linked to <strong>{userEmail}</strong>. You can return anytime using the same email.
+                This video is linked to <strong>{userEmail}</strong>. You can return
+                anytime using the same email.
               </p>
 
-              {/* ✅ AQUÍ MOSTRAMOS EL VIDEO */}
+              {/* ✅ VIDEO EMBED */}
               <div style={{ marginTop: "1rem" }}>
                 {video.url ? (
                   <div
@@ -114,8 +130,10 @@ export default function VideoPage({ video, userEmail, goHome }) {
                 <span>✕</span>
                 <span>You don't have access to this module yet</span>
               </div>
+
               <p className="small-text">
-                Complete the card payment and the system will automatically unlock the video once Paddle confirms the transaction.
+                Complete the card payment and the system will automatically unlock the
+                video once Paddle confirms the transaction.
               </p>
 
               <div className="button-row">
@@ -136,7 +154,6 @@ export default function VideoPage({ video, userEmail, goHome }) {
           <span className="badge">Content Preview</span>
 
           <div className="video-player-placeholder">
-            {/* si no tiene acceso, preview locked; si tiene, igual puedes dejarlo */}
             <img
               src={hasAccess ? "/unlocked.svg" : "/preview-locked.png"}
               alt="Preview of the module"
