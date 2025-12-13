@@ -36,7 +36,7 @@ export default function VideoPage({ video, userEmail, goHome }) {
     try {
       setCheckoutLoading(true);
       const res = await createCheckout(userEmail, video.id);
-      window.location.href = res.paymentUrl;
+      window.location.href = res.checkoutUrl || res.paymentUrl;
     } catch (err) {
       console.error(err);
       alert(err?.message || "Error initiating the payment.");

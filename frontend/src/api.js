@@ -22,7 +22,7 @@ function buildHeaders(extra = {}) {
     ...extra,
   };
 
-  // 🔥 Esto evita que ngrok te devuelva HTML "warning" en lugar del JSON
+  // Esto evita que ngrok te devuelva HTML "warning" en lugar del JSON
   if (IS_NGROK) {
     headers["ngrok-skip-browser-warning"] = "true";
   }
@@ -47,16 +47,13 @@ async function fetchJson(url, options = {}) {
       payload = JSON.parse(text);
     } catch (_) {}
 
-    const msg =
-      payload?.error ||
-      payload?.message ||
-      `Request failed (${res.status})`;
+    const msg = payload?.error || payload?.message || `Request failed (${res.status})`;
 
     console.error("API ERROR:", {
       url,
       status: res.status,
       contentType,
-      bodyPreview: text.slice(0, 200),
+      bodyPreview: text.slice(0, 300),
     });
 
     throw new Error(msg);
@@ -67,7 +64,7 @@ async function fetchJson(url, options = {}) {
     console.error("Respuesta NO JSON:", {
       url,
       contentType,
-      bodyPreview: text.slice(0, 200),
+      bodyPreview: text.slice(0, 300),
     });
 
     // típico caso ngrok warning
@@ -85,7 +82,7 @@ async function fetchJson(url, options = {}) {
 
 /**
  * Crear checkout en el backend (que internamente habla con Paddle).
- * Esperamos { orderId, checkoutUrl }
+ * Esperamos { orderId, checkoutUrl, paymentUrl, transactionId }
  */
 export async function createCheckout(userEmail, videoId) {
   return fetchJson(`${API_BASE}/checkout`, {
@@ -96,6 +93,7 @@ export async function createCheckout(userEmail, videoId) {
 
 /**
  * Verificar acceso
+ * Respuesta: { hasAccess: boolean }
  */
 export async function checkAccess(userEmail, videoId) {
   const params = new URLSearchParams({ userEmail, videoId });
@@ -106,6 +104,7 @@ export async function checkAccess(userEmail, videoId) {
 
 /**
  * Obtener catálogo de videos
+ * Respuesta backend: { videos: [...] }
  */
 export async function getVideos() {
   const data = await fetchJson(`${API_BASE}/videos`, { method: "GET" });
@@ -116,4 +115,13 @@ export async function getVideos() {
     ...v,
     precio: Number(v.precio),
   }));
+}
+
+/**
+ * (Opcional) Health check para probar conectividad con el backend.
+ * Útil para debug en Render.
+ */
+export async function healthCheck() {
+  const base = API_HOST.replace(/\/$/, "");
+  return fetchJson(`${base}/health`, { method: "GET" });
 }

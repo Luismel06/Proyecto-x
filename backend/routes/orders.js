@@ -1,41 +1,104 @@
 // backend/routes/orders.js
 import express from "express";
 import { supabase } from "../supabaseClient.js";
-import { randomUUID } from "crypto";
+import { randomUUID, createHmac, timingSafeEqual } from "crypto";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-// Mapea el ID de tu video (Supabase) al price_id de Paddle
+const router = express.Router();
+
+// ====== CONFIG ======
 const VIDEO_PRICE_MAP = {
-  8: "pri_01kc39rk7fpk844r8hsvjk6xaf", // Módulo 1
-  9: "pri_01kc39tsfqrhwzwae05t74mx1s", // Módulo 2
-  10: "pri_01kc39xmp3pnych5gypst2twvc", // Módulo 3
-  11: "pri_01kc39zdp3n8ja00rqg0n8qj1x", // Módulo 4
-  12: "pri_01kc3a1x73q4ww0vdj84s9zjsz", // Módulo 5
+  8: "pri_01kc39rk7fpk844r8hsvjk6xaf",
+  9: "pri_01kc39tsfqrhwzwae05t74mx1s",
+  10: "pri_01kc39xmp3pnych5gypst2twvc",
+  11: "pri_01kc39zdp3n8ja00rqg0n8qj1x",
+  12: "pri_01kc3a1x73q4ww0vdj84s9zjsz",
 };
 
 const PADDLE_API_KEY = process.env.PADDLE_API_KEY;
-const PADDLE_ENVIRONMENT = process.env.PADDLE_ENVIRONMENT || "sandbox";
-
+const PADDLE_ENVIRONMENT = process.env.PADDLE_ENVIRONMENT || "sandbox"; // "sandbox" | "live"
 const FRONTEND_BASE_URL =
   process.env.FRONTEND_BASE_URL || "https://proyecto-x-black.vercel.app";
+
+const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET || ""; // recomendable
 
 const PADDLE_API_URL =
   PADDLE_ENVIRONMENT === "live"
     ? "https://api.paddle.com"
     : "https://sandbox-api.paddle.com";
 
-if (!PADDLE_API_KEY) {
-  console.warn("⚠️  Missing PADDLE_API_KEY in environment variables.");
+function mustEnv(name, value) {
+  if (!value) throw new Error(`Missing env var: ${name}`);
 }
 
-const router = express.Router();
+// ====== HELPERS ======
+async function getOrCreateUserByEmail(userEmail) {
+  let { data: user, error: userError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", userEmail)
+    .single();
+
+  if (userError && userError.code !== "PGRST116") {
+    throw new Error("Error al buscar usuario");
+  }
+
+  if (!user) {
+    const { data: newUser, error: newUserError } = await supabase
+      .from("users")
+      .insert({ email: userEmail })
+      .select()
+      .single();
+
+    if (newUserError) throw new Error("Error al crear usuario");
+    user = newUser;
+  }
+
+  return user;
+}
+
+async function getVideoById(videoId) {
+  const { data: video, error } = await supabase
+    .from("videos")
+    .select("*")
+    .eq("id", videoId)
+    .single();
+
+  if (error || !video) return null;
+  return video;
+}
 
 /**
- * GET /api/orders/videos
- * Obtener catálogo de videos
+ * Paddle signature verification (v2)
+ * Header: Paddle-Signature: ts=...,h1=...
  */
+function verifyPaddleSignature({ rawBody, signatureHeader, secret }) {
+  if (!secret) return true; // si no quieres validar en dev, ok (pero en prod es mejor validar)
+  if (!signatureHeader) return false;
+
+  const parts = Object.fromEntries(
+    signatureHeader.split(",").map((kv) => kv.trim().split("="))
+  );
+
+  const ts = parts.ts;
+  const h1 = parts.h1;
+  if (!ts || !h1) return false;
+
+  const signedPayload = `${ts}:${rawBody}`;
+  const digest = createHmac("sha256", secret).update(signedPayload).digest("hex");
+
+  try {
+    return timingSafeEqual(Buffer.from(digest), Buffer.from(h1));
+  } catch {
+    return false;
+  }
+}
+
+// ====== ROUTES ======
+
+// GET /api/orders/videos
 router.get("/videos", async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -50,7 +113,7 @@ router.get("/videos", async (req, res) => {
         .json({ message: "Error al obtener el catálogo de videos" });
     }
 
-    const videos = data.map((v) => ({
+    const videos = (data || []).map((v) => ({
       id: v.id,
       titulo: v.titulo,
       descripcion: v.descripcion,
@@ -67,60 +130,34 @@ router.get("/videos", async (req, res) => {
   }
 });
 
-/**
- * POST /api/orders/checkout
- * Crear transacción en Paddle y devolver checkout URL
- */
+// POST /api/orders/checkout
 router.post("/checkout", async (req, res) => {
   try {
+    mustEnv("PADDLE_API_KEY", PADDLE_API_KEY);
+
     const { userEmail, videoId } = req.body;
 
-    const videoIdNum = Number(videoId);
-
-    if (!userEmail || !videoIdNum) {
+    if (!userEmail || !videoId) {
       return res.status(400).json({ error: "Faltan parámetros." });
     }
 
-    // 1) Buscar o crear usuario por email
-    let { data: user, error: userError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", userEmail)
-      .single();
+    const numericVideoId = Number(videoId);
+    const priceId = VIDEO_PRICE_MAP[numericVideoId];
 
-    // "row not found" en PostgREST
-    if (userError && userError.code !== "PGRST116") {
-      console.error("Error al buscar usuario:", userError);
-      return res.status(500).json({ error: "Error al buscar usuario" });
+    if (!priceId) {
+      return res
+        .status(400)
+        .json({ error: "Price ID de Paddle no configurado para este módulo." });
     }
 
-    if (!user) {
-      const { data: newUser, error: newUserError } = await supabase
-        .from("users")
-        .insert({ email: userEmail })
-        .select()
-        .single();
+    // 1) user
+    const user = await getOrCreateUserByEmail(userEmail);
 
-      if (newUserError) {
-        console.error("Error al crear usuario:", newUserError);
-        return res.status(500).json({ error: "Error al crear usuario" });
-      }
-      user = newUser;
-    }
+    // 2) video
+    const video = await getVideoById(numericVideoId);
+    if (!video) return res.status(404).json({ error: "Video no encontrado" });
 
-    // 2) Obtener info del video
-    const { data: video, error: videoError } = await supabase
-      .from("videos")
-      .select("*")
-      .eq("id", videoIdNum)
-      .single();
-
-    if (videoError || !video) {
-      console.error("Video no encontrado:", videoError);
-      return res.status(404).json({ error: "Video no encontrado" });
-    }
-
-    // 3) Crear orden pendiente
+    // 3) create local order pending
     const orderId = randomUUID();
 
     const { error: orderError } = await supabase.from("orders").insert({
@@ -138,16 +175,9 @@ router.post("/checkout", async (req, res) => {
       return res.status(500).json({ error: "Error al crear orden" });
     }
 
-    // 4) Obtener price_id
-    const priceId = VIDEO_PRICE_MAP[videoIdNum];
-    if (!priceId) {
-      console.error("No hay priceId configurado para videoId:", videoIdNum);
-      return res.status(500).json({
-        error: "Price ID de Paddle no configurado para este módulo",
-      });
-    }
+    // 4) create Paddle transaction
+    const redirectUrl = `${FRONTEND_BASE_URL}/thank-you?orderId=${orderId}`;
 
-    // 5) Crear transacción en Paddle
     const paddleRes = await fetch(`${PADDLE_API_URL}/transactions`, {
       method: "POST",
       headers: {
@@ -156,58 +186,53 @@ router.post("/checkout", async (req, res) => {
         "Paddle-Version": "1",
       },
       body: JSON.stringify({
-        customer: { email: userEmail },
         items: [{ price_id: priceId, quantity: 1 }],
+        customer: { email: userEmail },
         custom_data: {
           orderId,
           userId: user.id,
           videoId: video.id,
+          email: userEmail,
         },
         collection_mode: "automatic",
-
-        // Si tu Hosted Checkout ya tiene success/cancel URL configurado,
-        // puedes omitir esto. Si quieres forzarlo, puedes intentar:
-        // checkout: {
-        //   settings: {
-        //     success_url: `${FRONTEND_BASE_URL}/thank-you?orderId=${orderId}`,
-        //     cancel_url: `${FRONTEND_BASE_URL}/`,
-        //   },
-        // },
+        checkout: {
+          // esto hace que al pagar vuelva a tu app
+          redirect_url: redirectUrl,
+        },
       }),
     });
 
-    const body = await paddleRes.json();
+    const body = await paddleRes.json().catch(() => null);
 
     if (!paddleRes.ok) {
       console.error("Paddle error:", JSON.stringify(body, null, 2));
-      return res
-        .status(500)
-        .json({ error: "Error al crear el checkout con Paddle" });
+      return res.status(500).json({ error: "Error creando checkout con Paddle" });
     }
 
     const tx = body?.data;
+    const checkoutUrl = tx?.checkout?.url;
 
-    if (!tx?.id || !tx?.checkout?.url) {
+    if (!tx?.id || !checkoutUrl) {
       console.error("Respuesta inválida de Paddle:", JSON.stringify(body, null, 2));
       return res.status(500).json({ error: "Respuesta inválida desde Paddle" });
     }
 
-    // 6) Guardar transactionId en tu orden (para reconciliar)
-    const { error: updateTxError } = await supabase
+    // 5) store transactionId in local order
+    const { error: updErr } = await supabase
       .from("orders")
       .update({ provider_order_id: tx.id })
       .eq("id", orderId);
 
-    if (updateTxError) {
-      console.error("Error guardando provider_order_id:", updateTxError);
-      // No bloqueamos el checkout por esto, pero es importante tenerlo.
+    if (updErr) {
+      console.error("Error guardando provider_order_id:", updErr);
+      // no bloqueamos, pero lo reportamos
     }
 
-    // 7) Responder al frontend
     return res.json({
       orderId,
       transactionId: tx.id,
-      paymentUrl: tx.checkout.url, // el frontend redirige aquí
+      checkoutUrl,
+      paymentUrl: checkoutUrl, // por compatibilidad con tu frontend
     });
   } catch (err) {
     console.error("Error en /checkout:", err);
@@ -217,81 +242,118 @@ router.post("/checkout", async (req, res) => {
 
 /**
  * POST /api/orders/webhook
- * Webhook real para Paddle v2.
- * IMPORTANTE: en Paddle selecciona eventos:
- * - transaction.paid
- * - transaction.completed
+ * Paddle manda eventos como transaction.paid / transaction.completed.
+ * OJO: este endpoint recibe raw body (configurado en server.js).
  */
 router.post("/webhook", async (req, res) => {
   try {
-    const eventType = req.body?.event_type;
-    const data = req.body?.data;
+    // raw body (Buffer)
+    const raw = req.body;
+    const rawBody = Buffer.isBuffer(raw) ? raw.toString("utf8") : "";
 
-    console.log("📩 Paddle webhook:", eventType);
+    const signature = req.header("Paddle-Signature") || req.header("paddle-signature");
 
-    // Solo procesamos eventos que implican pago completado
-    if (!["transaction.paid", "transaction.completed"].includes(eventType)) {
-      return res.json({ ok: true });
-    }
-
-    const custom = data?.custom_data || {};
-    const orderId = custom.orderId;
-    const userId = custom.userId;
-    const videoId = Number(custom.videoId);
-
-    if (!orderId || !userId || !videoId) {
-      console.error("❌ Webhook sin custom_data válido:", custom);
-      return res.status(400).json({ error: "Missing custom_data" });
-    }
-
-    // 1) Marcar orden como pagada y asegurar provider_order_id
-    const { error: orderUpdateError } = await supabase
-      .from("orders")
-      .update({
-        estado: "pagado",
-        provider_order_id: data?.id || null,
-      })
-      .eq("id", orderId);
-
-    if (orderUpdateError) {
-      console.error("❌ Error updating order:", orderUpdateError);
-      return res.status(500).json({ error: "Order update failed" });
-    }
-
-    // 2) Crear acceso
-    const { error: accessError } = await supabase.from("accesses").insert({
-      user_id: userId,
-      video_id: videoId,
+    const valid = verifyPaddleSignature({
+      rawBody,
+      signatureHeader: signature,
+      secret: PADDLE_WEBHOOK_SECRET,
     });
 
-    // 23505 = unique violation (ya existía)
-    if (accessError && accessError.code !== "23505") {
-      console.error("❌ Error creating access:", accessError);
-      return res.status(500).json({ error: "Access creation failed" });
+    if (!valid) {
+      console.error("Webhook signature invalid");
+      return res.status(401).json({ error: "Invalid signature" });
     }
 
-    console.log("✅ Access granted:", { userId, videoId, orderId });
-    return res.json({ ok: true });
+    const event = JSON.parse(rawBody);
+    const eventType = event?.event_type;
+    const data = event?.data;
+
+    // Nos interesan estos:
+    const isPaid =
+      eventType === "transaction.paid" || eventType === "transaction.completed";
+
+    // En Paddle, el transaction id es data.id
+    const transactionId = data?.id;
+    const custom = data?.custom_data || {};
+    const orderId = custom?.orderId;
+    const videoId = custom?.videoId;
+    const userId = custom?.userId;
+
+    if (!transactionId) {
+      return res.status(200).json({ ok: true }); // ignorar eventos raros
+    }
+
+    // Si no viene orderId en custom_data, buscamos por provider_order_id
+    let finalOrderId = orderId;
+
+    if (!finalOrderId) {
+      const { data: orderRow } = await supabase
+        .from("orders")
+        .select("id, user_id, video_id")
+        .eq("provider_order_id", transactionId)
+        .maybeSingle();
+
+      finalOrderId = orderRow?.id || null;
+    }
+
+    if (!finalOrderId) {
+      // No encontramos la orden -> respondemos ok para que Paddle no reintente infinito,
+      // pero logueamos.
+      console.warn("Webhook: order not found for transaction:", transactionId);
+      return res.status(200).json({ ok: true });
+    }
+
+    if (isPaid) {
+      // 1) marcar pagado
+      const { data: orderData, error: updErr } = await supabase
+        .from("orders")
+        .update({
+          estado: "pagado",
+          provider: "paddle",
+          provider_order_id: transactionId,
+        })
+        .eq("id", finalOrderId)
+        .select("user_id, video_id")
+        .single();
+
+      if (updErr || !orderData) {
+        console.error("Webhook: error updating order:", updErr);
+        return res.status(500).json({ error: "Error actualizando orden" });
+      }
+
+      // 2) crear acceso
+      const uId = orderData.user_id || userId;
+      const vId = orderData.video_id || videoId;
+
+      if (uId && vId) {
+        const { error: accessError } = await supabase.from("accesses").insert({
+          user_id: uId,
+          video_id: vId,
+        });
+
+        if (accessError && accessError.code !== "23505") {
+          console.error("Webhook: error creating access:", accessError);
+          return res.status(500).json({ error: "Error creando acceso" });
+        }
+      }
+    }
+
+    return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("🔥 Webhook error:", err);
-    return res.status(500).json({ error: "Webhook failed" });
+    console.error("Error en webhook:", err);
+    return res.status(500).json({ error: "Error interno" });
   }
 });
 
-/**
- * GET /api/orders/access/check
- * Verifica si un usuario (email) tiene acceso a un video.
- */
+// GET /api/orders/access/check
 router.get("/access/check", async (req, res) => {
   try {
     const { userEmail, videoId } = req.query;
-    const videoIdNum = Number(videoId);
 
-    if (!userEmail || !videoIdNum) {
+    if (!userEmail || !videoId) {
       return res.status(400).json({ error: "Faltan parámetros" });
     }
 
-    // Buscar usuario
     const { data: user, error: userError } = await supabase
       .from("users")
       .select("id")
@@ -302,12 +364,11 @@ router.get("/access/check", async (req, res) => {
       return res.json({ hasAccess: false });
     }
 
-    // Verificar acceso
     const { data: access, error: accessError } = await supabase
       .from("accesses")
       .select("id")
       .eq("user_id", user.id)
-      .eq("video_id", videoIdNum)
+      .eq("video_id", Number(videoId))
       .maybeSingle();
 
     if (accessError) {
